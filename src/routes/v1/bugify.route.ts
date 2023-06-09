@@ -12,9 +12,13 @@ const client = new WebClient(process.env.SLACK_BOT_TOKEN, {
 
 const poeClient = new PoeClient({ logLevel: 'silent' });
 
-async function sendMsg(ts: string, channel: string) {
-  await poeClient.sendMessage('Create ticket about Wrong url format', 'bugify', true, (result) => {
+async function sendMsg(ts: string, channel: string, text: string) {
+  console.log('🚀 ----------------------------------------------------------🚀');
+  console.log('🚀 ~ file: bugify.route.ts:16 ~ sendMsg ~ sendMsg:');
+  console.log('🚀 ----------------------------------------------------------🚀');
+  await poeClient.sendMessage(text, 'bugify', true, (result) => {
     setTimeout(() => {
+      console.log(result);
       client.chat.update({
         channel: channel || '',
         ts,
@@ -37,10 +41,9 @@ router.route('/').post(async (req, res, next) => {
         channel: body?.event?.channel || '',
         text: 'Hello world :tada:',
       });
-      res.status(200).end();
       const { ts, channel } = response;
-      await sendMsg(ts, channel);
-      return;
+      res.status(200);
+      await sendMsg(ts, channel, body.event.text);
     }
     return res.status(200).json({
       text: 'Hello, world.',
