@@ -21,5 +21,13 @@
     "require": ["tsconfig-paths/register"]
   },
   "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules", "spec"]
+  "exclude": [
+    "dist",
+    "node_modules",
+    "spec",
+    "node_modules",
+    "node_modules/*",
+    "node_modules/**/*",
+    "node_modules/poe-node-api/*"
+  ]
 }
