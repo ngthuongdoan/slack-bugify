@@ -10,12 +10,11 @@ const client = new WebClient(process.env.SLACK_BOT_TOKEN, {
   logLevel: LogLevel.DEBUG,
 });
 
-const poeClient = new PoeClient({});
+const poeClient = new PoeClient({
+  logLevel: 'silent',
+});
 
 async function sendMsg(ts: string, channel: string, text: string) {
-  console.log('🚀 ----------------------------------------------------------🚀');
-  console.log('🚀 ~ file: bugify.route.ts:16 ~ sendMsg ~ sendMsg:');
-  console.log('🚀 ----------------------------------------------------------🚀');
   await poeClient.sendMessage(text, 'bugify', true, async (result) => {
     await client.chat.update({
       channel: channel || '',
@@ -34,15 +33,17 @@ router.route('/').post(async (req, res, next) => {
   // const type = req.body?.type;
   const body = req.body as SlackEventPayload;
   if (body.type === 'event_callback') {
+    console.log(JSON.stringify(body, null, 2));
     if (body?.event?.type === 'app_mention') {
       // console.log(JSON.stringify(req.body, null, 2));
       const response = await client.chat.postMessage({
         channel: body?.event?.channel || '',
-        text: 'Hello world :tada:',
+        text: 'Please standby...',
       });
       const { ts, channel } = response;
       res.send();
       await sendMsg(ts, channel, body.event.text);
+      return;
     }
     return res.status(200).json({
       text: 'Hello, world.',
