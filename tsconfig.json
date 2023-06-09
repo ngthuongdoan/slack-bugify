@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    "types": ["node"],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es6",
+    "target": "ES2022",
+    "lib": ["ES2022"],
     "noImplicitAny": true,
     "moduleResolution": "node",
     "sourceMap": true,
@@ -16,7 +18,15 @@
   },
   "ts-node": {
     "files": true,
-    "exclude": ["node_modules"],
+    "exclude": [
+      "dist",
+      "node_modules",
+      "spec",
+      "node_modules",
+      "node_modules/*",
+      "node_modules/**/*",
+      "node_modules/poe-node-api/*"
+    ],
     "skipLibCheck": true,
     "require": ["tsconfig-paths/register"]
   },
