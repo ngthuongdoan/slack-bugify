@@ -26,6 +26,7 @@ async function sendMsg(ts: string, channel: string, text: string) {
 
 const router = express.Router();
 
+let tempText = '';
 router.route('/').post(async (req, res, next) => {
   await poeClient.init(true);
   await poeClient.getNextData();
@@ -35,15 +36,20 @@ router.route('/').post(async (req, res, next) => {
   if (body.type === 'event_callback') {
     console.log(JSON.stringify(body, null, 2));
     if (body?.event?.type === 'app_mention') {
-      // console.log(JSON.stringify(req.body, null, 2));
-      const response = await client.chat.postMessage({
-        channel: body?.event?.channel || '',
-        text: 'Please standby...',
-      });
-      const { ts, channel } = response;
-      res.send();
-      await sendMsg(ts, channel, body.event.text);
-      return;
+      if (tempText !== body.event.text && tempText === '') {
+        tempText = body.event.text;
+        // console.log(JSON.stringify(req.body, null, 2));
+        const response = await client.chat.postMessage({
+          channel: body?.event?.channel || '',
+          text: 'Please standby...',
+        });
+        const { ts, channel } = response;
+        res.send();
+        await sendMsg(ts, channel, body.event.text);
+      } else {
+        tempText = '';
+        return;
+      }
     }
     return res.status(200).json({
       text: 'Hello, world.',
