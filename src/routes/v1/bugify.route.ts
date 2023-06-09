@@ -10,21 +10,18 @@ const client = new WebClient(process.env.SLACK_BOT_TOKEN, {
   logLevel: LogLevel.DEBUG,
 });
 
-const poeClient = new PoeClient({ logLevel: 'silent' });
+const poeClient = new PoeClient({});
 
 async function sendMsg(ts: string, channel: string, text: string) {
   console.log('🚀 ----------------------------------------------------------🚀');
   console.log('🚀 ~ file: bugify.route.ts:16 ~ sendMsg ~ sendMsg:');
   console.log('🚀 ----------------------------------------------------------🚀');
-  await poeClient.sendMessage(text, 'bugify', true, (result) => {
-    setTimeout(() => {
-      console.log(result);
-      client.chat.update({
-        channel: channel || '',
-        ts,
-        text: result,
-      });
-    }, 400);
+  await poeClient.sendMessage(text, 'bugify', true, async (result) => {
+    await client.chat.update({
+      channel: channel || '',
+      ts,
+      text: result,
+    });
   });
 }
 
@@ -42,7 +39,7 @@ router.route('/').post(async (req, res, next) => {
         text: 'Hello world :tada:',
       });
       const { ts, channel } = response;
-      res.status(200);
+      res.send();
       await sendMsg(ts, channel, body.event.text);
     }
     return res.status(200).json({
