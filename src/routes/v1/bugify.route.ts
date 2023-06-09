@@ -17,7 +17,7 @@ const poeClient = new PoeClient({
 
 async function sendMsg(text: string) {
   let response = '';
-  await poeClient.sendMessage(text, 'bugify', true, async (result) => {
+  await poeClient.sendMessage(text, 'bugify', true, (result) => {
     response = result;
   });
   return response;
@@ -39,11 +39,17 @@ router.route('/').post(
         console.log('🚀 -------------------------------------------------------------🚀');
         console.log('🚀 ~ file: bugify.route.ts:39 ~ catchAsync ~ message:', message);
         console.log('🚀 -------------------------------------------------------------🚀');
-        await client.chat.postMessage({
-          channel: body?.event?.channel || '',
-          text: message,
-        });
-        return res.status(200).send(); // end Slack 3s timeout
+        if (message) {
+          res.status(200).json({
+            text: 'Hello',
+          }); // end Slack 3s timeout
+          await client.chat.postMessage({
+            channel: body?.event?.channel || '',
+            text: message,
+          });
+        } else {
+          return res.end();
+        }
       }
       return res.status(200).json({
         text: 'Hello, world.',
