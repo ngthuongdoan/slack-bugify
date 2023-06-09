@@ -1,7 +1,28 @@
 import { SlackEventPayload } from '@/types/slack';
 import axios from 'axios';
 import express from 'express';
-// import { hrBotController } from '@/controllers/hrBot.controller';
+import { WebClient, LogLevel } from '@slack/web-api';
+import { PoeClient } from 'poe-node-api';
+// WebClient instantiates a client that can call API methods
+// When using Bolt, you can use either `app.client` or the `client` passed to listeners.
+const client = new WebClient(process.env.SLACK_BOT_TOKEN, {
+  // LogLevel can be imported and used to make debugging simpler
+  logLevel: LogLevel.DEBUG,
+});
+
+const poeClient = new PoeClient({ logLevel: 'silent' });
+
+async function sendMsg(ts: string, channel: string) {
+  await poeClient.sendMessage('Create ticket about Wrong url format', 'bugify', true, (result) => {
+    setTimeout(() => {
+      client.chat.update({
+        channel: channel || '',
+        ts,
+        text: result,
+      });
+    }, 400);
+  });
+}
 
 const router = express.Router();
 
@@ -11,20 +32,15 @@ router.route('/').post(async (req, res, next) => {
   const body = req.body as SlackEventPayload;
   if (body.type === 'event_callback') {
     if (body?.event?.type === 'app_mention') {
-      console.log(JSON.stringify(req.body, null, 2));
-      await axios.post(
-        'https://slack.com/api/chat.postMessage',
-        {
-          channel: body?.event?.channel || '',
-          text: 'Hello world :tada:',
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.SLACK_BOT_TOKEN}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      // console.log(JSON.stringify(req.body, null, 2));
+      const response = await client.chat.postMessage({
+        channel: body?.event?.channel || '',
+        text: 'Hello world :tada:',
+      });
+      res.status(200).end();
+      const { ts, channel } = response;
+      await sendMsg(ts, channel);
+      return;
     }
     return res.status(200).json({
       text: 'Hello, world.',
