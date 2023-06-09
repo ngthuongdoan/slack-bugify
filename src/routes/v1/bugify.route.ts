@@ -28,6 +28,8 @@ async function sendMsg(ts: string, channel: string, text: string) {
 const router = express.Router();
 
 router.route('/').post(async (req, res, next) => {
+  await poeClient.init(true);
+  await poeClient.getNextData();
   const challenge = req.body?.challenge || '';
   // const type = req.body?.type;
   const body = req.body as SlackEventPayload;
