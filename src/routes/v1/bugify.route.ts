@@ -15,18 +15,20 @@ const poeClient = new PoeClient({
 });
 
 async function sendMsg(ts: string, channel: string, text: string) {
+  let response = '';
   await poeClient.sendMessage(text, 'bugify', true, async (result) => {
-    await client.chat.update({
-      channel: channel || '',
-      ts,
-      text: result,
-    });
+    response = result;
+  });
+  await client.chat.update({
+    channel: channel || '',
+    ts,
+    text: response,
   });
 }
 
 const router = express.Router();
 
-let tempText = '';
+// let tempText = '';
 router.route('/').post(async (req, res, next) => {
   await poeClient.init(true);
   await poeClient.getNextData();
@@ -36,20 +38,13 @@ router.route('/').post(async (req, res, next) => {
   if (body.type === 'event_callback') {
     console.log(JSON.stringify(body, null, 2));
     if (body?.event?.type === 'app_mention') {
-      if (tempText !== body.event.text && tempText === '') {
-        tempText = body.event.text;
-        // console.log(JSON.stringify(req.body, null, 2));
-        const response = await client.chat.postMessage({
-          channel: body?.event?.channel || '',
-          text: 'Please standby...',
-        });
-        const { ts, channel } = response;
-        await sendMsg(ts, channel, body.event.text);
-        return res.send();
-      } else {
-        tempText = '';
-        return res.send();
-      }
+      const response = await client.chat.postMessage({
+        channel: body?.event?.channel || '',
+        text: 'Please standby...',
+      });
+      const { ts, channel } = response;
+      res.send(); // end Slack 3s timeout
+      await sendMsg(ts, channel, body.event.text);
     }
     return res.status(200).json({
       text: 'Hello, world.',
