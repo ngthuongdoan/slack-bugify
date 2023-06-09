@@ -44,8 +44,8 @@ router.route('/').post(async (req, res, next) => {
           text: 'Please standby...',
         });
         const { ts, channel } = response;
-        res.send();
         await sendMsg(ts, channel, body.event.text);
+        return res.send();
       } else {
         tempText = '';
         return res.send();
