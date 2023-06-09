@@ -48,7 +48,7 @@ router.route('/').post(async (req, res, next) => {
         await sendMsg(ts, channel, body.event.text);
       } else {
         tempText = '';
-        return;
+        return res.send();
       }
     }
     return res.status(200).json({
