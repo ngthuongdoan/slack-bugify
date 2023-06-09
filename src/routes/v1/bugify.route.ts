@@ -8,11 +8,11 @@ router.route('/').post((req, res, next) => {
   const type = req.body?.type;
   if (type === 'event_callback') {
     if (req.body?.event?.type === 'app_mention')
-      res.status(200).json({
+      return res.json({
         text: 'Hello, world.',
       });
   }
-  res.status(200).json({
+  return res.status(200).json({
     challenge,
   });
 });
