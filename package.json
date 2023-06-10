@@ -12,8 +12,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --check **/*.js",
-    "prettier:fix": "prettier --write **/*.js",
-    "postinstall": "patch-package"
+    "prettier:fix": "prettier --write **/*.js"
   },
   "dependencies": {
     "@slack/bolt": "^3.13.1",
@@ -33,8 +32,6 @@
     "joi": "^17.9.1",
     "morgan": "^1.10.0",
     "openai": "^3.2.1",
-    "pino-pretty": "^10.0.0",
-    "poe-node-api": "^0.0.7",
     "tsc-alias": "^1.8.5",
     "winston": "^3.8.2",
     "xss-clean": "^0.1.1"
@@ -66,7 +63,6 @@
     "esno": "^0.16.3",
     "jest": "^27.0.6",
     "nodemon": "^2.0.7",
-    "patch-package": "^7.0.0",
     "shelljs": "0.8.5",
     "supertest": "6.1.3",
     "ts-node": "^10.9.1",
