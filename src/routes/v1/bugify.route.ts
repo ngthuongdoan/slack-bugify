@@ -35,14 +35,20 @@ router.route('/').post(
       if (body.type === 'event_callback') {
         console.log(JSON.stringify(body, null, 2));
         if (body?.event?.type === 'app_mention') {
+          res.status(200).end();
           const message = await sendMsg(body.event.text);
+          console.log('🚀 -------------------------------------------------------------🚀');
+          console.log('🚀 ~ file: bugify.route.ts:40 ~ catchAsync ~ message:', message);
+          console.log('🚀 -------------------------------------------------------------🚀');
           if (message && message !== '') {
-            await client.chat.postMessage({
-              channel: body?.event?.channel || '',
-              text: message,
-            });
+            setTimeout(async () => {
+              await client.chat.postMessage({
+                channel: body?.event?.channel || '',
+                text: message,
+              });
+            }, 1000);
           }
-          return res.status(200).end();
+          return;
         }
         return res.status(200).json({
           text: 'Hello, world.',
