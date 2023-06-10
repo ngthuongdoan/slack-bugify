@@ -22,8 +22,10 @@ async function initPoe() {
   await poeClient.getNextData();
 }
 const router = express.Router();
-const regex = /(Title|Description|Expected|Actual)/gi;
-
+function containsRequiredWords(str: string) {
+  const requiredWords = ['Title', 'Description', 'Expected', 'Actual', 'Resources'];
+  return requiredWords.every((word) => new RegExp(`\\b${word}\\b`).test(str));
+}
 router.route('/').post(
   catchAsync(async (req, res) => {
     try {
@@ -38,7 +40,7 @@ router.route('/').post(
           console.log('🚀 -------------------------------------------------------------🚀');
           console.log('🚀 ~ file: bugify.route.ts:40 ~ catchAsync ~ message:', message);
           console.log('🚀 -------------------------------------------------------------🚀');
-          if (message && message !== '' && regex.test(message)) {
+          if (message && message !== '' && containsRequiredWords(message)) {
             await axios.post(
               'https://slack.com/api/chat.postMessage',
               {
