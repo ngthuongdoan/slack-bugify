@@ -8,6 +8,13 @@ import routes from './routes/v1';
 import ApiError from './utils/ApiError';
 import { ENV } from './utils/config';
 import morgan from './utils/morgan';
+import rateLimit from 'express-rate-limit';
+
+const limiter = rateLimit({
+  windowMs: 1000, // time window for limiting requests (in milliseconds)
+  max: 2, // maximum number of requests allowed within the time window
+  message: 'Too many requests, please try again later.',
+});
 
 const app = express();
 require('dotenv').config();
@@ -16,6 +23,7 @@ if (ENV.env !== 'test') {
   app.use(morgan.successHandler);
   app.use(morgan.errorHandler);
 }
+app.use(limiter);
 
 app.use(express.json());
 
