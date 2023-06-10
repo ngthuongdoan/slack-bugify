@@ -8,20 +8,15 @@ import routes from './routes/v1';
 import ApiError from './utils/ApiError';
 import { ENV } from './utils/config';
 import morgan from './utils/morgan';
-import path from 'path';
-// import helmet from 'helmet';
 
 const app = express();
+require('dotenv').config();
 
 if (ENV.env !== 'test') {
   app.use(morgan.successHandler);
   app.use(morgan.errorHandler);
 }
 
-// set security HTTP headers
-// app.use(helmet());
-
-// parse json request body
 app.use(express.json());
 
 // parse urlencoded request body
@@ -50,12 +45,6 @@ app.use(
     extensions: ['html', 'htm'],
   })
 );
-
-app.use(express.static(path.join(__dirname, 'views')));
-
-app.get('*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'views', 'index.html'));
-});
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
