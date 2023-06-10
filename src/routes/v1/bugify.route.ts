@@ -53,7 +53,7 @@ router.route('/').post(
             ],
           });
           console.log('🚀 ---------------------------------------------------------------🚀');
-          console.log('🚀 ~ file: bugify.route.ts:55 ~ catchAsync ~ response:', JSON.stringify(response, null, 2));
+          console.log('🚀 ~ file: bugify.route.ts:55 ~ catchAsync ~ response:', response);
           console.log('🚀 ---------------------------------------------------------------🚀');
           const message = response.data.choices[0].message.content;
           console.log('🚀 -------------------------------------------------------------🚀');
@@ -90,6 +90,9 @@ router.route('/').post(
         challenge,
       });
     } catch (err) {
+      console.log('🚀 -----------------------------------------------------🚀');
+      console.log('🚀 ~ file: bugify.route.ts:93 ~ catchAsync ~ err:', err);
+      console.log('🚀 -----------------------------------------------------🚀');
       return res.status(200).json({
         text: 'Sorry, the server returned',
       });
