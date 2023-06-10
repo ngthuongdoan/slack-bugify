@@ -52,6 +52,9 @@ router.route('/').post(
               },
             ],
           });
+          console.log('🚀 ---------------------------------------------------------------🚀');
+          console.log('🚀 ~ file: bugify.route.ts:55 ~ catchAsync ~ response:', JSON.stringify(response, null, 2));
+          console.log('🚀 ---------------------------------------------------------------🚀');
           const message = response.data.choices[0].message.content;
           console.log('🚀 -------------------------------------------------------------🚀');
           console.log('🚀 ~ file: bugify.route.ts:40 ~ catchAsync ~ message:', message);
