@@ -1,6 +1,6 @@
 import { SlackEventPayload } from '@/types/slack';
 import express from 'express';
-import { PoeClient } from 'poe-node-api';
+import { PoeClient, sleep } from 'poe-node-api';
 import catchAsync from '@/utils/catchAsync';
 import axios from 'axios';
 
@@ -10,7 +10,9 @@ const poeClient = new PoeClient({
 
 async function sendMsg(text: string) {
   let response = '';
-  await poeClient.sendMessage(text, 'bugify', true, (result) => {
+  console.log(`sleeping...`);
+  await sleep(2000);
+  await poeClient.sendMessage(text.replace(/&lt;@U05BNEE76N4>/gi, '').trim(), 'bugify', true, (result) => {
     response = result;
   });
   return response;
