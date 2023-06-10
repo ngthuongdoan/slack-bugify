@@ -1,12 +1,8 @@
 import { SlackEventPayload } from '@/types/slack';
 import express from 'express';
-import { WebClient, LogLevel } from '@slack/web-api';
 import { PoeClient } from 'poe-node-api';
 import catchAsync from '@/utils/catchAsync';
-
-const client = new WebClient(process.env.SLACK_BOT_TOKEN, {
-  logLevel: LogLevel.INFO,
-});
+import axios from 'axios';
 
 const poeClient = new PoeClient({
   logLevel: 'silent',
@@ -41,12 +37,19 @@ router.route('/').post(
           console.log('🚀 ~ file: bugify.route.ts:40 ~ catchAsync ~ message:', message);
           console.log('🚀 -------------------------------------------------------------🚀');
           if (message && message !== '') {
-            setTimeout(async () => {
-              await client.chat.postMessage({
+            await axios.post(
+              'https://slack.com/api/chat.postMessage',
+              {
                 channel: body?.event?.channel || '',
                 text: message,
-              });
-            }, 1000);
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${process.env.SLACK_BOT_TOKEN}`,
+                  'Content-Type': 'application/json',
+                },
+              }
+            );
           }
           return;
         }
