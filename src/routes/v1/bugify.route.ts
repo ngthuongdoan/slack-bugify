@@ -43,7 +43,12 @@ router.route('/').post(
               'https://slack.com/api/chat.postMessage',
               {
                 channel: body?.event?.channel || '',
-                text: message,
+                text: `Dear &lt;@${body.event.user}&gt;\n${message
+                  .replace(/Title:/gi, '*Title:*')
+                  .replace(/Description/gi, '*Description:*')
+                  .replace(/Expected:/gi, '*Expected:*')
+                  .replace(/Actual/gi, '*Actual:*')
+                  .replace(/Resources/gi, '*Resources:*')}`,
               },
               {
                 headers: {
