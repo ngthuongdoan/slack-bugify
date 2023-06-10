@@ -32,6 +32,7 @@
     "http-status": "^1.6.2",
     "joi": "^17.9.1",
     "morgan": "^1.10.0",
+    "openai": "^3.2.1",
     "pino-pretty": "^10.0.0",
     "poe-node-api": "^0.0.7",
     "tsc-alias": "^1.8.5",

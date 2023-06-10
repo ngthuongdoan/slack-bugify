@@ -1,46 +1,63 @@
 import { SlackEventPayload } from '@/types/slack';
-import express from 'express';
-import { PoeClient, sleep } from 'poe-node-api';
 import catchAsync from '@/utils/catchAsync';
 import axios from 'axios';
+import express from 'express';
+import { Configuration, OpenAIApi } from 'openai';
+// const poeClient = new PoeClient({
+//   logLevel: 'silent',
+// });
 
-const poeClient = new PoeClient({
-  logLevel: 'silent',
+// async function sendMsg(text: string) {
+//   let response = '';
+
+//   await poeClient.sendMessage(text.replace(/&lt;@U05BNEE76N4>/gi, '').trim(), 'bugify', true, (result) => {
+//     response = result;
+//   });
+//   return response;
+// }
+
+// async function initPoe() {
+//   await poeClient.init(true);
+//   await poeClient.getNextData();
+// }
+const router = express.Router();
+// function containsRequiredWords(str: string) {
+//   const requiredWords = ['Title', 'Description', 'Expected', 'Actual', 'Resources'];
+//   return requiredWords.every((word) => new RegExp(`\\b${word}\\b`).test(str));
+// }
+const configuration = new Configuration({
+  organization: process.env.CHAT_ORGANIZATION,
+  apiKey: process.env.CHAT_API_KEY,
 });
 
-async function sendMsg(text: string) {
-  let response = '';
+const openai = new OpenAIApi(configuration);
 
-  await poeClient.sendMessage(text.replace(/&lt;@U05BNEE76N4>/gi, '').trim(), 'bugify', true, (result) => {
-    response = result;
-  });
-  return response;
-}
-
-async function initPoe() {
-  await poeClient.init(true);
-  await poeClient.getNextData();
-}
-const router = express.Router();
-function containsRequiredWords(str: string) {
-  const requiredWords = ['Title', 'Description', 'Expected', 'Actual', 'Resources'];
-  return requiredWords.every((word) => new RegExp(`\\b${word}\\b`).test(str));
-}
 router.route('/').post(
   catchAsync(async (req, res) => {
     try {
-      await initPoe();
       const challenge = req.body?.challenge || '';
+
       const body = req.body as SlackEventPayload;
       if (body.type === 'event_callback') {
         console.log(JSON.stringify(body, null, 2));
         if (body?.event?.type === 'app_mention') {
           res.status(200).end();
-          const message = await sendMsg(body.event.text);
+          const response = await openai.createChatCompletion({
+            model: 'gpt-3.5-turbo',
+            messages: [
+              {
+                role: 'user',
+                content: `Create and Bug Report Template with these headers: Title, Description, Expected, Actual, Resources about this ${body.event.text
+                  .replace(/&lt;@U05BNEE76N4>/gi, '')
+                  .trim()}`,
+              },
+            ],
+          });
+          const message = response.data.choices[0].message.content;
           console.log('🚀 -------------------------------------------------------------🚀');
           console.log('🚀 ~ file: bugify.route.ts:40 ~ catchAsync ~ message:', message);
           console.log('🚀 -------------------------------------------------------------🚀');
-          if (message && message !== '' && containsRequiredWords(message)) {
+          if (message && message !== '') {
             await axios.post(
               'https://slack.com/api/chat.postMessage',
               {
