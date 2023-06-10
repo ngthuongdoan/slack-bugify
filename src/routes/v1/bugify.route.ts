@@ -22,6 +22,7 @@ async function initPoe() {
   await poeClient.getNextData();
 }
 const router = express.Router();
+const regex = /(Title|Description|Expected|Actual)/gi;
 
 router.route('/').post(
   catchAsync(async (req, res) => {
@@ -37,7 +38,7 @@ router.route('/').post(
           console.log('🚀 -------------------------------------------------------------🚀');
           console.log('🚀 ~ file: bugify.route.ts:40 ~ catchAsync ~ message:', message);
           console.log('🚀 -------------------------------------------------------------🚀');
-          if (message && message !== '') {
+          if (message && message !== '' && regex.test(message)) {
             await axios.post(
               'https://slack.com/api/chat.postMessage',
               {
