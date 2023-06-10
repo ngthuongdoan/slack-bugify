@@ -41,7 +41,6 @@ router.route('/').post(
       if (body.type === 'event_callback') {
         console.log(JSON.stringify(body, null, 2));
         if (body?.event?.type === 'app_mention') {
-          res.status(200).end();
           const response = await openai.createChatCompletion({
             model: 'gpt-3.5-turbo',
             messages: [
@@ -77,7 +76,7 @@ router.route('/').post(
               }
             );
           }
-          return;
+          res.status(200).end();
         }
         return res.status(200).json({
           text: 'Hello, world.',
