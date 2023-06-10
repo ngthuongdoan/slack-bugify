@@ -76,7 +76,7 @@ router.route('/').post(
               }
             );
           }
-          res.status(200).end();
+          return res.status(200).end();
         }
         return res.status(200).json({
           text: 'Hello, world.',
