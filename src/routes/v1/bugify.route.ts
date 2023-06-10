@@ -10,8 +10,7 @@ const poeClient = new PoeClient({
 
 async function sendMsg(text: string) {
   let response = '';
-  console.log(`sleeping...`);
-  await sleep(2000);
+
   await poeClient.sendMessage(text.replace(/&lt;@U05BNEE76N4>/gi, '').trim(), 'bugify', true, (result) => {
     response = result;
   });
