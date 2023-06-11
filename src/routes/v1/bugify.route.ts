@@ -11,9 +11,12 @@ const poeClient = new PoeClient({
 async function sendMsg(text: string) {
   let response = '';
 
-  await poeClient.sendMessage(text.replace(/&lt;@U05BNEE76N4>/gi, '').trim(), 'bugify', true, (result) => {
+  const _text = text.replace(/&lt;@U05BNEE76N4>/gi, '').trim();
+  logger.info(_text);
+  await poeClient.sendMessage(_text, 'bugify', true, (result) => {
     response = result;
   });
+  logger.info('Response: ' + response);
   return response;
 }
 
@@ -36,9 +39,6 @@ router.route('/').post(
         console.log(JSON.stringify(body, null, 2));
         if (body?.event?.type === 'app_mention') {
           const message = await sendMsg(body.event.text);
-          console.log('🚀 -------------------------------------------------------------🚀');
-          console.log('🚀 ~ file: bugify.route.ts:40 ~ catchAsync ~ message:', message);
-          console.log('🚀 -------------------------------------------------------------🚀');
           if (message && message !== '' && containsRequiredWords(message)) {
             logger.info('Calling chat.postMessage');
             await axios.post(

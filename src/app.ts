@@ -11,9 +11,14 @@ import morgan from './utils/morgan';
 import rateLimit from 'express-rate-limit';
 
 const limiter = rateLimit({
-  windowMs: 1000, // time window for limiting requests (in milliseconds)
-  max: 2, // maximum number of requests allowed within the time window
-  message: 'Too many requests, please try again later.',
+  windowMs: 5 * 1000, // time window for limiting requests (in milliseconds)
+  max: 1, // maximum number of requests allowed within the time window
+  handler: function (req, res) {
+    res.status(429).send({
+      status: 429,
+      message: 'Too many requests!',
+    });
+  },
 });
 
 const app = express();
