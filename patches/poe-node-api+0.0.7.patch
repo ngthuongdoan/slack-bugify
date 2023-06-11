@@ -1,0 +1,18 @@
+diff --git a/node_modules/poe-node-api/dist/PoeClient.d.ts b/node_modules/poe-node-api/dist/PoeClient.d.ts
+index 69c57e9..afb9689 100644
+--- a/node_modules/poe-node-api/dist/PoeClient.d.ts
++++ b/node_modules/poe-node-api/dist/PoeClient.d.ts
+@@ -1,3 +1,4 @@
++// @ts-nocheck
+ export declare enum BotNickNameEnum {
+     'a2' = "a2",
+     'a2_2' = "a2_2",
+diff --git a/node_modules/poe-node-api/src/PoeClient.ts b/node_modules/poe-node-api/src/PoeClient.ts
+index f2df881..3b8f814 100644
+--- a/node_modules/poe-node-api/src/PoeClient.ts
++++ b/node_modules/poe-node-api/src/PoeClient.ts
+@@ -1,3 +1,4 @@
++// @ts-nocheck
+ import { fetch as globalFetch } from './fetch.js'
+ import WebSocket, {ErrorEvent} from "ws";
+ import CryptoJS from "crypto-js";
