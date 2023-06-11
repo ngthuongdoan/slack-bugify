@@ -1,65 +1,46 @@
 import { SlackEventPayload } from '@/types/slack';
+import express from 'express';
+import { PoeClient } from 'poe-node-api';
 import catchAsync from '@/utils/catchAsync';
 import axios from 'axios';
-import express from 'express';
-import { Configuration, OpenAIApi } from 'openai';
-// const poeClient = new PoeClient({
-//   logLevel: 'silent',
-// });
-
-// async function sendMsg(text: string) {
-//   let response = '';
-
-//   await poeClient.sendMessage(text.replace(/&lt;@U05BNEE76N4>/gi, '').trim(), 'bugify', true, (result) => {
-//     response = result;
-//   });
-//   return response;
-// }
-
-// async function initPoe() {
-//   await poeClient.init(true);
-//   await poeClient.getNextData();
-// }
-const router = express.Router();
-// function containsRequiredWords(str: string) {
-//   const requiredWords = ['Title', 'Description', 'Expected', 'Actual', 'Resources'];
-//   return requiredWords.every((word) => new RegExp(`\\b${word}\\b`).test(str));
-// }
-const configuration = new Configuration({
-  organization: process.env.CHAT_ORGANIZATION,
-  apiKey: process.env.CHAT_API_KEY,
+import logger from '@/utils/logger';
+const poeClient = new PoeClient({
+  logLevel: 'silent',
 });
 
-const openai = new OpenAIApi(configuration);
+async function sendMsg(text: string) {
+  let response = '';
 
+  await poeClient.sendMessage(text.replace(/&lt;@U05BNEE76N4>/gi, '').trim(), 'bugify', true, (result) => {
+    response = result;
+  });
+  return response;
+}
+
+async function initPoe() {
+  await poeClient.init(true);
+  await poeClient.getNextData();
+}
+const router = express.Router();
+function containsRequiredWords(str: string) {
+  const requiredWords = ['Title', 'Description', 'Expected', 'Actual', 'Resources'];
+  return requiredWords.every((word) => new RegExp(`\\b${word}\\b`).test(str));
+}
 router.route('/').post(
   catchAsync(async (req, res) => {
     try {
+      await initPoe();
       const challenge = req.body?.challenge || '';
-
       const body = req.body as SlackEventPayload;
       if (body.type === 'event_callback') {
         console.log(JSON.stringify(body, null, 2));
         if (body?.event?.type === 'app_mention') {
-          const response = await openai.createChatCompletion({
-            model: 'gpt-3.5-turbo',
-            messages: [
-              {
-                role: 'user',
-                content: `Create and Bug Report Template with these headers: Title, Description, Expected, Actual, Resources about this ${body.event.text
-                  .replace(/&lt;@U05BNEE76N4>/gi, '')
-                  .trim()}`,
-              },
-            ],
-          });
-          console.log('🚀 ---------------------------------------------------------------🚀');
-          console.log('🚀 ~ file: bugify.route.ts:55 ~ catchAsync ~ response:', response);
-          console.log('🚀 ---------------------------------------------------------------🚀');
-          const message = response.data.choices[0].message.content;
+          const message = await sendMsg(body.event.text);
           console.log('🚀 -------------------------------------------------------------🚀');
           console.log('🚀 ~ file: bugify.route.ts:40 ~ catchAsync ~ message:', message);
           console.log('🚀 -------------------------------------------------------------🚀');
-          if (message && message !== '') {
+          if (message && message !== '' && containsRequiredWords(message)) {
+            logger.info('Calling chat.postMessage');
             await axios.post(
               'https://slack.com/api/chat.postMessage',
               {
@@ -78,6 +59,7 @@ router.route('/').post(
                 },
               }
             );
+            logger.info('End chat.postMessage');
           }
           return res.status(200).end();
         }
@@ -90,9 +72,6 @@ router.route('/').post(
         challenge,
       });
     } catch (err) {
-      console.log('🚀 -----------------------------------------------------🚀');
-      console.log('🚀 ~ file: bugify.route.ts:93 ~ catchAsync ~ err:', err);
-      console.log('🚀 -----------------------------------------------------🚀');
       return res.status(200).json({
         text: 'Sorry, the server returned',
       });
