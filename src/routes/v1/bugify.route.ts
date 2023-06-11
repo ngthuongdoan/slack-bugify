@@ -38,6 +38,7 @@ router.route('/').post(
       if (body.type === 'event_callback') {
         console.log(JSON.stringify(body, null, 2));
         if (body?.event?.type === 'app_mention') {
+          res.json({ ok: true });
           const message = await sendMsg(body.event.text);
           if (message && message !== '' && containsRequiredWords(message)) {
             logger.info('Calling chat.postMessage');
@@ -60,8 +61,8 @@ router.route('/').post(
               }
             );
             logger.info('End chat.postMessage');
+            return;
           }
-          res.json({ ok: true });
         }
         return res.status(200).json({
           ok: true,
