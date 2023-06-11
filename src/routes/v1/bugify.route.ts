@@ -61,9 +61,10 @@ router.route('/').post(
             );
             logger.info('End chat.postMessage');
           }
-          return res.status(200).end();
+          res.json({ ok: true });
         }
         return res.status(200).json({
+          ok: true,
           text: 'Hello, world.',
         });
       }
