@@ -85,19 +85,14 @@ router.route('/').post(
           }
           return;
         }
-        return res.status(200).json({
-          ok: true,
-          text: 'Hello, world.',
-        });
+        return;
       }
       // Handle required challenge responses
       return res.status(200).json({
         challenge,
       });
     } catch (err) {
-      return res.status(200).json({
-        text: 'Sorry, the server returned',
-      });
+      return;
     }
   })
 );
