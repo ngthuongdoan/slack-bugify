@@ -3,8 +3,8 @@ import express from 'express';
 
 const router = express.Router();
 
-router.route('/').get(async (req, res) => {
-  return res.send(200).json({
+router.route('/').get((req, res) => {
+  res.send(200).json({
     ok: true,
   });
 });
