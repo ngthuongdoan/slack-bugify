@@ -37,8 +37,8 @@ router.route('/').post(
       const body = req.body as SlackEventPayload;
       if (body.type === 'event_callback') {
         console.log(JSON.stringify(body, null, 2));
+        res.json({ ok: true });
         if (body?.event?.type === 'app_mention') {
-          res.json({ ok: true });
           const message = await sendMsg(body.event.text);
           if (message && message !== '' && containsRequiredWords(message)) {
             logger.info('Calling chat.postMessage');
@@ -63,6 +63,26 @@ router.route('/').post(
             logger.info('End chat.postMessage');
             return;
           }
+        } else if (body?.event?.type === 'member_joined_channel') {
+          const user = body.event.user;
+          if (user.includes('U03N8DKNK8U')) {
+            await axios.post(
+              'https://slack.com/api/chat.postMessage',
+              {
+                channel: body?.event?.channel || '',
+                text: `Hi, I'm a AI powered chat bot that will help you create bug tickets with predefined template. Proudly made by <@>`,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${process.env.SLACK_BOT_TOKEN}`,
+                  'Content-Type': 'application/json',
+                },
+              }
+            );
+            logger.info('End chat.postMessage');
+            return;
+          }
+          return;
         }
         return res.status(200).json({
           ok: true,
