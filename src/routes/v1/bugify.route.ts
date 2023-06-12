@@ -32,13 +32,13 @@ function containsRequiredWords(str: string) {
 router.route('/').post(
   catchAsync(async (req, res) => {
     try {
-      await initPoe();
       const challenge = req.body?.challenge || '';
       const body = req.body as SlackEventPayload;
       if (body.type === 'event_callback') {
         console.log(JSON.stringify(body, null, 2));
+        res.json({ ok: true });
         if (body?.event?.type === 'app_mention') {
-          res.json({ ok: true });
+          await initPoe();
           const message = await sendMsg(body.event.text);
           if (message && message !== '' && containsRequiredWords(message)) {
             logger.info('Calling chat.postMessage');
@@ -64,7 +64,6 @@ router.route('/').post(
             return;
           }
         } else if (body?.event?.type === 'member_joined_channel') {
-          res.json({ ok: true });
           const user = body.event.user;
           if (user.includes('U03N8DKNK8U')) {
             await axios.post(
