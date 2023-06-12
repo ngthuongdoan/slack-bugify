@@ -71,7 +71,7 @@ router.route('/').post(
               'https://slack.com/api/chat.postMessage',
               {
                 channel: body?.event?.channel || '',
-                text: `Hi, I'm a AI powered chat bot that will help you create bug tickets with predefined template. Proudly made by <@>`,
+                text: `Hi, I'm a AI powered chat bot that will help you create bug tickets with predefined template. Proudly made by <@U03N8DKNK8U>`,
               },
               {
                 headers: {
