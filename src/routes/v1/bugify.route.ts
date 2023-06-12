@@ -34,8 +34,8 @@ router.route('/').post(
     try {
       const challenge = req.body?.challenge || '';
       const body = req.body as SlackEventPayload;
+      console.log(JSON.stringify(body, null, 2));
       if (body.type === 'event_callback') {
-        console.log(JSON.stringify(body, null, 2));
         res.json({ ok: true });
         if (body?.event?.type === 'app_mention') {
           await initPoe();
