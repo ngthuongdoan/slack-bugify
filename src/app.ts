@@ -26,6 +26,7 @@ require('dotenv').config();
 
 if (ENV.env !== 'test') {
   app.use(morgan.successHandler);
+  app.use(morgan.bodyHandler);
   app.use(morgan.errorHandler);
 }
 app.use(limiter);

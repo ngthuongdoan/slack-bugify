@@ -3,6 +3,7 @@ import { ENV } from './config';
 import logger from './logger';
 
 import { ServerResponse } from 'http';
+import { NextFunction, Request, Response } from 'express';
 
 interface CustomServerResponse extends ServerResponse {
   locals?: Record<string, any>;
@@ -23,4 +24,11 @@ const errorHandler = morgan(errorResponseFormat, {
   stream: { write: (message) => logger.error(message.trim()) },
 });
 
-export default { successHandler, errorHandler };
+const bodyHandler = (req: Request, res: Response, next: NextFunction) => {
+  if (req.body) {
+    res.locals.body = JSON.stringify(req.body);
+  }
+  next();
+};
+
+export default { successHandler, errorHandler, bodyHandler };
