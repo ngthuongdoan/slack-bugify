@@ -8,7 +8,7 @@ const router = express.Router();
 const defaultRoutes = [
   {
     path: '/health-check',
-    redirect: healthCheckRoute,
+    route: healthCheckRoute,
   },
   {
     path: '/bugify',
