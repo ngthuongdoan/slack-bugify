@@ -53,7 +53,7 @@ router.route('/').post(
                   .replace(/Expected:/gi, '*Expected:*')
                   .replace(/Actual:/gi, '*Actual:*')
                   .replace(/Resources:/gi, '*Resources:*')}`,
-                ...[body?.event?.event_ts ? { thread_ts: body?.event?.event_ts } : {}],
+                thread_ts: body?.event?.ts,
               },
               {
                 headers: {
