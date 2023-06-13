@@ -10,8 +10,9 @@ const poeClient = new PoeClient({
 
 async function sendMsg(text: string) {
   let response = '';
+  const regex = new RegExp(`&lt;@${process.env.SLACK_BOT_ID}>`, 'gi');
 
-  const _text = text.replace(/&lt;@U05BNEE76N4>/gi, '').trim();
+  const _text = text.replace(regex, '').trim();
   logger.info(_text);
   await poeClient.sendMessage(_text, 'bugify', true, (result) => {
     response = result;
@@ -65,7 +66,7 @@ router.route('/').post(
           }
         } else if (body?.event?.type === 'member_joined_channel') {
           const user = body.event.user;
-          if (user.includes('U03N8DKNK8U')) {
+          if (user.includes(process.env.SLACK_BOT_ID)) {
             await axios.post(
               'https://slack.com/api/chat.postMessage',
               {
