@@ -3,9 +3,11 @@ import express from 'express';
 const router = express.Router();
 
 router.route('/').get((req, res) => {
-  res.sendStatus(200).json({
-    ok: true,
-  });
+  res
+    .json({
+      ok: true,
+    })
+    .end();
 });
 
 export default router;

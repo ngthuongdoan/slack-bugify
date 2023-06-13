@@ -14,10 +14,13 @@ const limiter = rateLimit({
   windowMs: 5 * 1000, // time window for limiting requests (in milliseconds)
   max: 1, // maximum number of requests allowed within the time window
   handler: function (req, res) {
-    res.status(429).send({
-      status: 429,
-      message: 'Too many requests!',
-    });
+    res
+      .status(429)
+      .send({
+        status: 429,
+        message: 'Too many requests!',
+      })
+      .end();
   },
 });
 
@@ -26,7 +29,6 @@ require('dotenv').config();
 
 if (ENV.env !== 'test') {
   app.use(morgan.successHandler);
-  app.use(morgan.bodyHandler);
   app.use(morgan.errorHandler);
 }
 app.use(limiter);
@@ -35,13 +37,6 @@ app.use(express.json());
 
 // parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));
-
-// sanitize request data
-app.use(xss());
-
-// gzip compression
-app.use(compression());
-
 // enable cors
 app.use(cors());
 app.options('*', cors());
@@ -54,11 +49,6 @@ that any files in the `public` directory can be accessed by the client without a
 routing. For example, if there is a file named `image.jpg` in the `public` directory, it can be
 accessed by the client at the URL `http://localhost:port/image.jpg`. This is useful for serving
 static assets like images, stylesheets, and client-side JavaScript files. */
-app.use(
-  express.static('public', {
-    extensions: ['html', 'htm'],
-  })
-);
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
