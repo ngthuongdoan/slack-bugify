@@ -14,7 +14,17 @@ async function sendMsg(text: string) {
 
   const _text = text.replace(regex, '').trim();
   logger.info(_text);
-  await poeClient.sendMessage(_text, 'bugify', true, (result) => {
+  /**
+   * a2 <==> Claude-instant
+a2_2 <==> Claude+
+beaver <==> GPT-4
+capybara <==> Sage
+nutria <==> Dragonfly
+chinchilla <==> ChatGPT
+hutia <==> NeevaAI
+Your own bot
+   */
+  await poeClient.sendMessage(_text, 'chinchilla', true, (result) => {
     response = result;
   });
   logger.info('Response: ' + response);
@@ -26,10 +36,10 @@ async function initPoe() {
   await poeClient.getNextData();
 }
 const router = express.Router();
-function containsRequiredWords(str: string) {
-  const requiredWords = ['Title', 'Description', 'Expected', 'Actual', 'Resources'];
-  return requiredWords.every((word) => new RegExp(`\\b${word}\\b`).test(str));
-}
+// function containsRequiredWords(str: string) {
+//   const requiredWords = ['Title', 'Description', 'Expected', 'Actual', 'Resources'];
+//   return requiredWords.every((word) => new RegExp(`\\b${word}\\b`).test(str));
+// }
 router.route('/').post(
   catchAsync(async (req, res) => {
     try {
@@ -41,18 +51,19 @@ router.route('/').post(
         if (body?.event?.type === 'app_mention') {
           await initPoe();
           const message = await sendMsg(body.event.text);
-          if (message && message !== '' && containsRequiredWords(message)) {
+          if (message && message !== '') {
             logger.info('Calling chat.postMessage');
             await axios.post(
               'https://slack.com/api/chat.postMessage',
               {
                 channel: body?.event?.channel || '',
-                text: `Dear <@${body.event.user}>\n${message
-                  .replace(/Title:/gi, '*Title:*')
-                  .replace(/Description:/gi, '*Description:*')
-                  .replace(/Expected:/gi, '*Expected:*')
-                  .replace(/Actual:/gi, '*Actual:*')
-                  .replace(/Resources:/gi, '*Resources:*')}`,
+                // text: `Dear <@${body.event.user}>\n${message
+                //   .replace(/Title:/gi, '*Title:*')
+                //   .replace(/Description:/gi, '*Description:*')
+                //   .replace(/Expected:/gi, '*Expected:*')
+                //   .replace(/Actual:/gi, '*Actual:*')
+                //   .replace(/Resources:/gi, '*Resources:*')}`,
+                text: message,
                 thread_ts: body?.event?.ts,
               },
               {
