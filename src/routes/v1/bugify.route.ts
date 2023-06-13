@@ -53,6 +53,7 @@ router.route('/').post(
                   .replace(/Expected:/gi, '*Expected:*')
                   .replace(/Actual:/gi, '*Actual:*')
                   .replace(/Resources:/gi, '*Resources:*')}`,
+                ...[body?.event?.thread_ts ? { thread_ts: body?.event?.thread_ts } : {}],
               },
               {
                 headers: {
@@ -71,7 +72,7 @@ router.route('/').post(
               'https://slack.com/api/chat.postMessage',
               {
                 channel: body?.event?.channel || '',
-                text: `Hi, I'm a AI powered chat bot that will help you create bug tickets with predefined template. Proudly made by <@U03N8DKNK8U>`,
+                text: `Hi, I'm an AI powered chat bot that will help you create bug tickets with predefined templates.`,
               },
               {
                 headers: {

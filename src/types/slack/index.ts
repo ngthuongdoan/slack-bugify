@@ -5,6 +5,7 @@ export interface SlackEvent {
   user: string;
   ts: string;
   blocks: SlackBlock[];
+  thread_ts: string;
   team: string;
   channel: string;
   event_ts: string;
