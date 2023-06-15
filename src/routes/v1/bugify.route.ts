@@ -24,7 +24,7 @@ chinchilla <==> ChatGPT
 hutia <==> NeevaAI
 Your own bot
    */
-  await poeClient.sendMessage(_text, 'chinchilla', true, (result) => {
+  await poeClient.sendMessage(_text, 'bugify', true, (result) => {
     response = result;
   });
   logger.info('Response: ' + response);
@@ -33,13 +33,14 @@ Your own bot
 
 async function initPoe() {
   await poeClient.init(true);
-  await poeClient.getNextData();
+  // await poeClient.getNextData();
+  // await poeClient.updateAllBotInfo();
 }
 const router = express.Router();
-// function containsRequiredWords(str: string) {
-//   const requiredWords = ['Title', 'Description', 'Expected', 'Actual', 'Resources'];
-//   return requiredWords.every((word) => new RegExp(`\\b${word}\\b`).test(str));
-// }
+function containsRequiredWords(str: string) {
+  const requiredWords = ['Title', 'Description', 'Expected', 'Actual', 'Resources'];
+  return requiredWords.every((word) => new RegExp(`\\b${word}\\b`).test(str));
+}
 router.route('/').post(
   catchAsync(async (req, res) => {
     try {
@@ -51,19 +52,18 @@ router.route('/').post(
         if (body?.event?.type === 'app_mention') {
           await initPoe();
           const message = await sendMsg(body.event.text);
-          if (message && message !== '') {
+          if (message && message !== '' && containsRequiredWords(message)) {
             logger.info('Calling chat.postMessage');
             await axios.post(
               'https://slack.com/api/chat.postMessage',
               {
                 channel: body?.event?.channel || '',
-                // text: `Dear <@${body.event.user}>\n${message
-                //   .replace(/Title:/gi, '*Title:*')
-                //   .replace(/Description:/gi, '*Description:*')
-                //   .replace(/Expected:/gi, '*Expected:*')
-                //   .replace(/Actual:/gi, '*Actual:*')
-                //   .replace(/Resources:/gi, '*Resources:*')}`,
-                text: message,
+                text: `Dear <@${body.event.user}>\n${message
+                  .replace(/Title:/gi, '*Title:*')
+                  .replace(/Description:/gi, '*Description:*')
+                  .replace(/Expected:/gi, '*Expected:*')
+                  .replace(/Actual:/gi, '*Actual:*')
+                  .replace(/Resources:/gi, '*Resources:*')}`,
                 thread_ts: body?.event?.ts,
               },
               {
@@ -83,7 +83,7 @@ router.route('/').post(
               'https://slack.com/api/chat.postMessage',
               {
                 channel: body?.event?.channel || '',
-                text: `Hi, I'm an AI powered chat bot that will help you create bug tickets with predefined templates.`,
+                text: `Hi, I'm an AI-powered chat bot that will help you create bug tickets with predefined templates.`,
               },
               {
                 headers: {
