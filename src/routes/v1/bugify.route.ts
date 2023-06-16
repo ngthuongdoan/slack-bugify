@@ -38,7 +38,7 @@ async function initPoe() {
 }
 const router = express.Router();
 function containsRequiredWords(str: string) {
-  const requiredWords = ['Title', 'Description', 'Expected', 'Actual', 'Resources'];
+  const requiredWords = ['Title', 'Description', 'Expected', 'Steps to reproduce', 'Actual', 'Resources'];
   return requiredWords.every((word) => new RegExp(`\\b${word}\\b`).test(str));
 }
 router.route('/').post(
@@ -63,6 +63,7 @@ router.route('/').post(
                   .replace(/Description:/gi, '*Description:*')
                   .replace(/Expected:/gi, '*Expected:*')
                   .replace(/Actual:/gi, '*Actual:*')
+                  .replace(/Steps to reproduce:/gi, '*Steps to reproduce:*')
                   .replace(/Resources:/gi, '*Resources:*')}`,
                 thread_ts: body?.event?.ts,
               },

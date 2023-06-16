@@ -1,8 +1,6 @@
-import compression from 'compression';
 import cors from 'cors';
 import express from 'express';
 import httpStatus from 'http-status';
-import xss from 'xss-clean';
 import { errorConverter, errorHandler } from './middlewares/error';
 import routes from './routes/v1';
 import ApiError from './utils/ApiError';
@@ -11,7 +9,7 @@ import morgan from './utils/morgan';
 import rateLimit from 'express-rate-limit';
 
 const limiter = rateLimit({
-  windowMs: 5 * 1000, // time window for limiting requests (in milliseconds)
+  windowMs: 1000, // time window for limiting requests (in milliseconds)
   max: 1, // maximum number of requests allowed within the time window
   handler: function (req, res) {
     res
